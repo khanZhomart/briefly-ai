@@ -5,13 +5,11 @@ import { TelegrafModule } from 'nestjs-telegraf';
 import { FooModule } from './telegram/scenes/foo.module';
 import { configFactory, openaiConfigFactory, telegrafConfigFactory } from './common/config/factories';
 
-const ENV = process.env.NODE_ENV
-
 @Module({
     imports: [
         FooModule,
         ConfigModule.forRoot({
-            envFilePath: `${process.cwd()}/resources/.${ENV ? 'env' : `${ENV}.env`}`,
+            envFilePath: `${process.cwd()}/resources/.${process.env.NODE_ENV}.env`,
             load: [configFactory]
         }),
         OpenAIModule.forRootAsync({
