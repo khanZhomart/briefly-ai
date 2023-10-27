@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OpenAIModule } from '@webeleon/nestjs-openai';
 import { TelegrafModule } from 'nestjs-telegraf';
-import { FooModule } from './telegram/scenes/foo.module';
+import { StarterModule } from './telegram/services/starter.module';
 import { configFactory, openaiConfigFactory, telegrafConfigFactory } from './common/config/factories';
+import { BrieflyModule } from './telegram/scenes/briefly-scene/briefly.module';
 
 @Module({
     imports: [
-        FooModule,
         ConfigModule.forRoot({
             envFilePath: `${process.cwd()}/resources/.${process.env.NODE_ENV}.env`,
             load: [configFactory]
@@ -18,7 +18,7 @@ import { configFactory, openaiConfigFactory, telegrafConfigFactory } from './com
             useFactory: openaiConfigFactory,
         }),
         TelegrafModule.forRootAsync({
-            imports: [ConfigModule],
+            imports: [ConfigModule, StarterModule, BrieflyModule],
             inject: [ConfigService],
             useFactory: telegrafConfigFactory,
         }),
