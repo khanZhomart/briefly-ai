@@ -1,11 +1,17 @@
 import { Role } from "@webeleon/nestjs-openai"
 
-export type HistoryMessage = {
-    role?: Role,
+type ChatMessage = {
     text: string,
 }
 
-export type GptHistoryMessage = {
-    role?: Role,
+type GptMessage = {
     textChunks: number[][],
 }
+
+type BaseRole = {
+    role?: Role,
+}
+
+export type HistoryMessage = ChatMessage & BaseRole
+
+export type GptHistoryMessage = GptMessage & BaseRole
