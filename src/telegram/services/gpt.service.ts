@@ -4,7 +4,7 @@ import { randomUUID } from "crypto";
 
 import { GptHistoryMessage, HistoryMessage } from "@/common/types";
 import { Prompts } from "@/common/constants";
-import * as gptt from '../utils/token.util'
+import * as tokenzr from '../utils/token.util'
 
 @Injectable()
 export class GptService {
@@ -14,15 +14,15 @@ export class GptService {
     ) {}
 
     async resolve(history: HistoryMessage[]): Promise<string> {
-        const messages: GptHistoryMessage[] = history.map(({ role, text }) => ({ role: role, textChunks: gptt.encodeToChunks(text) }))
+        const messages: GptHistoryMessage[] = history.map(({ role, text }) => ({ role: role, textChunks: tokenzr.encodeToChunks(text) }))
         const payload: Message[] = this.transform(messages)
-        const response = await this.handle(payload)
+        const response: string[] = await this.handle(payload)
         return response[0]
     }
 
     private transform(chunks: GptHistoryMessage[]): Message[] {
         return chunks.reduce((current: Message[], message, _) => {
-            const parts = message.textChunks.map(tokens => ({ role: message.role, content: gptt.decode(tokens) }))
+            const parts: Message[] = message.textChunks.map(tokens => ({ role: message.role, content: tokenzr.decode(tokens) }))
             return current.concat(parts)
         }, [])
     }

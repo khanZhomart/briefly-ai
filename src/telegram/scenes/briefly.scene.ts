@@ -17,7 +17,7 @@ export class BrieflyScene {
 
     @SceneEnter()
     onEnter(): string {
-        return 'Scene enter'
+        return 'Type your prompt'
     }
 
     @SceneLeave()
