@@ -2,9 +2,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OpenAIModule } from '@webeleon/nestjs-openai';
 import { TelegrafModule } from 'nestjs-telegraf';
-import { StarterModule } from './telegram/services/starter.module';
+
 import { configFactory, openaiConfigFactory, telegrafConfigFactory } from './common/config/factories';
-import { BrieflyModule } from './telegram/scenes/briefly-scene/briefly.module';
+import { ScenesModule } from './telegram/scenes/scenes.module';
+import { ServicesModule } from './telegram/services/services.module';
+import { HandlersModule } from './telegram/services/handlers';
 
 @Module({
     imports: [
@@ -18,7 +20,7 @@ import { BrieflyModule } from './telegram/scenes/briefly-scene/briefly.module';
             useFactory: openaiConfigFactory,
         }),
         TelegrafModule.forRootAsync({
-            imports: [ConfigModule, StarterModule, BrieflyModule],
+            imports: [ConfigModule, HandlersModule, ScenesModule],
             inject: [ConfigService],
             useFactory: telegrafConfigFactory,
         }),

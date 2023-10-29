@@ -25,6 +25,7 @@
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
     "@webeleon/nestjs-openai": "^0.5.2",
+    "gpt-tokenizer": "^2.1.2",
     "nestjs-telegraf": "^2.6.3",
     "openai": "^3.2.1",
     "reflect-metadata": "^0.1.13",
