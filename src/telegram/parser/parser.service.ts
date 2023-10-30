@@ -2,7 +2,8 @@ import { Injectable } from "@nestjs/common";
 import * as pdfjs from "pdfjs-dist";
 import mammoth from "mammoth";
 import axios from "axios";
-import * as textract from "textract";
+import fs from "fs";
+// import * as textract from "textract";
 
 type PDFSource = Buffer | string;
 
@@ -29,6 +30,11 @@ export class ParserService {
     const buffer = Buffer.from(response.data, "utf-8");
     const result = await mammoth.extractRawText({ buffer: buffer });
     return result.value;
+  }
+
+  async extractTextFromTxt(url: string): Promise<string> {
+    const response = await fetch(url);
+    return await response.text();
   }
 
   // async extractTextFromDoc(url: string): Promise<string> {
