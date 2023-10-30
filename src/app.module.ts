@@ -6,12 +6,9 @@ import { configFactory, openaiConfigFactory, telegrafConfigFactory } from './com
 import { ScenesModule } from './telegram/scenes/scenes.module';
 import { ServicesModule } from './telegram/services/services.module';
 import { HandlersModule } from './telegram/services/handlers';
-import { ParserModule } from './telegram/parser/parser.module';
-
 
 @Module({
     imports: [
-        ParserModule,
         ServicesModule,
         ConfigModule.forRoot({
             envFilePath: `${process.cwd()}/resources/.${process.env.NODE_ENV}.env`,
@@ -29,4 +26,4 @@ import { ParserModule } from './telegram/parser/parser.module';
         }),
     ],
 })
-export class AppModule {}
+export class AppModule { }

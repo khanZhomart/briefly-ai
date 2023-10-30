@@ -2,13 +2,13 @@ import { Injectable } from "@nestjs/common";
 import * as pdfjs from "pdfjs-dist";
 import mammoth from "mammoth";
 import axios from "axios";
-import fs from "fs";
 // import * as textract from "textract";
 
 type PDFSource = Buffer | string;
 
 @Injectable()
 export class ParserService {
+
   async extractTextFromPDF(source: PDFSource): Promise<string> {
     const doc = await pdfjs.getDocument(source).promise;
     let pageTexts = Array.from({ length: doc.numPages }, async (v, i) => {

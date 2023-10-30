@@ -4,7 +4,7 @@ import { Context, HistoryMessage } from "@/common/types";
 import { GptService } from "../services/gpt.service";
 import { Scenes } from "@/common/constants";
 import { Role } from "@webeleon/nestjs-openai";
-import { ParserService } from "../parser/parser.service";
+import { ParserService } from "../services/parser.service";
 
 /**
  * Scene that asks user to provide text for summarizing.
