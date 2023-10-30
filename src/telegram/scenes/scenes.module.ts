@@ -10,4 +10,4 @@ import { OpenAIModule } from "@webeleon/nestjs-openai";
     imports: [ServicesModule, OpenAIModule],
     providers: [BrieflyScene]
 })
-export class ScenesModule {}
+export class ScenesModule { }
