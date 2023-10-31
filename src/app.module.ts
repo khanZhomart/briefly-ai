@@ -6,6 +6,9 @@ import { configFactory, openaiConfigFactory, telegrafConfigFactory } from './com
 import { ScenesModule } from './telegram/scenes/scenes.module';
 import { ServicesModule } from './telegram/services/services.module';
 import { HandlersModule } from './telegram/services/handlers';
+import { APP_FILTER } from '@nestjs/core';
+import { TelegramExceptionFilter } from './common/filters/telegram-exception.filter';
+import { GptExceptionFilter } from './common/filters/gpt-exception.filter';
 
 @Module({
     imports: [
@@ -25,5 +28,15 @@ import { HandlersModule } from './telegram/services/handlers';
             useFactory: telegrafConfigFactory,
         }),
     ],
+    providers: [
+        {
+            provide: APP_FILTER,
+            useClass: TelegramExceptionFilter,
+        },
+        {
+            provide: APP_FILTER,
+            useClass: GptExceptionFilter,
+        }
+    ]
 })
 export class AppModule { }
