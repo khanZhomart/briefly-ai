@@ -1,4 +1,4 @@
-import { Command, Ctx, Message as Update, On, Scene, SceneEnter, SceneLeave } from "nestjs-telegraf";
+import { Command, Ctx, Message as Update, On, Scene, SceneEnter, SceneLeave, Message } from "nestjs-telegraf";
 
 import { Context, HistoryMessage } from "@/common/types";
 import { GptService } from "../services/gpt.service";
@@ -29,10 +29,7 @@ export class BrieflyScene {
 
     @On('text')
     async onText(@Ctx() ctx: Context, @Update('text') text: string): Promise<void> {
-        ctx.session.history.push({ role: Role.USER, text: text })
-        const answer = await this.gpt.resolve(ctx.session.history)
-        ctx.session.history.push({ role: Role.ASSISTANT, text: answer })
-        ctx.reply(answer)
+        await this.conversate(ctx, text)
     }
 
     @Command('leave')
@@ -47,27 +44,23 @@ export class BrieflyScene {
 
     @On("document")
     async onCommandUpload(ctx: Context): Promise<void> {
-        const document = (ctx.message as any).document;
-        if (!document) return;
+        const doc = (ctx.message as any).document;
 
-        const fileId = document.file_id;
-        const fileLink = await ctx.telegram.getFileLink(fileId);
-
-        const parsers = {
-            "application/pdf": this.parserService.extractTextFromPDF,
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document": this.parserService.extractTextFromDocx,
-            "text/plain": this.parserService.extractTextFromTxt,
-            // "application/msword": this.parserService.extractTextFromDoc,
+        if (!doc) {
+            return
         };
 
-        const parser = parsers[document.mime_type];
-        if (parser) {
-            const result = await parser(fileLink.href);
-            console.log(result);
-        } else {
-            console.log('Unsupported file type.');
-        }
+        const fileLink = await ctx.telegram.getFileLink(doc.file_id);
+        const parse = this.parserService.getParser(doc.mime_type);
+        const text = await parse(fileLink.href)
+
+        await this.conversate(ctx, text)
     }
 
-
+    private async conversate(ctx: Context, text: string): Promise<void> {
+        ctx.session.history.push({ role: Role.USER, text: text })
+        const answer = await this.gpt.resolve(ctx.session.history)
+        ctx.session.history.push({ role: Role.ASSISTANT, text: answer })
+        ctx.reply(answer)
+    }
 }
