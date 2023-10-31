@@ -1,15 +1,15 @@
-import { Injectable, NotAcceptableException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { Message, OpenAIService, Role } from "@webeleon/nestjs-openai";
 import { randomUUID } from "crypto";
 
 import { GptHistoryMessage, HistoryMessage } from "@/common/types";
+import { GptTokenException } from "@/common";
 import { Prompts } from "@/common/constants";
 import * as tokenzr from '../utils/token.util'
-import { GptTokenException } from "@/common";
+import { Gpt } from "@/common/constants/gpt.enum";
 
 @Injectable()
 export class GptService {
-    private static readonly CONTEXT_LENGTH_LIMIT: number = 16_000
 
     constructor(
         private readonly openai: OpenAIService,
@@ -19,7 +19,7 @@ export class GptService {
         const messages: GptHistoryMessage[] = history.map(({ role, text }) => ({ role: role, textChunks: tokenzr.encodeToChunks(text) }))
         const contextLength = this.getContextLength(messages)
 
-        if (contextLength > GptService.CONTEXT_LENGTH_LIMIT) {
+        if (contextLength > Gpt.LIMIT_16K) {
             throw new GptTokenException(contextLength)
         }
 

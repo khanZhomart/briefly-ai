@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import * as pdfjs from "pdfjs-dist";
 import mammoth from "mammoth";
 import axios from "axios";
+
 import { MimeTypes } from "@/common/constants";
 import { Parser } from "@/common/types";
 
@@ -20,7 +21,7 @@ export class ParserService {
 
   private async extractFromPDF(url: string): Promise<string> {
     const doc = await pdfjs.getDocument(url).promise;
-    let pageTexts = Array.from({ length: doc.numPages }, async (v, i) => {
+    let pageTexts = Array.from({ length: doc.numPages }, async (_, i) => {
       return (await (await doc.getPage(i + 1)).getTextContent()).items
         .map((token) => {
           if ("str" in token) {

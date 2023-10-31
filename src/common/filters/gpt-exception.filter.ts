@@ -1,6 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from "@nestjs/common";
 import { Context } from "../types";
-import { GptTokenException } from "../exceptions/gpt-token.exception";
+import { GptTokenException } from "../exceptions";
 
 @Catch(GptTokenException)
 export class GptExceptionFilter implements ExceptionFilter {

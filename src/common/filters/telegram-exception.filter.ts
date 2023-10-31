@@ -1,6 +1,5 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from "@nestjs/common";
-import { InjectBot, TelegrafException } from "nestjs-telegraf";
-import { Telegraf } from "telegraf";
+import { TelegrafException } from "nestjs-telegraf";
 import { Context } from "../types";
 
 @Catch(TelegrafException)
