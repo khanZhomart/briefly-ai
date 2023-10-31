@@ -8,7 +8,7 @@ import { ServicesModule } from './telegram/services/services.module';
 import { HandlersModule } from './telegram/services/handlers';
 import { APP_FILTER } from '@nestjs/core';
 import { TelegramExceptionFilter } from './common/filters/telegram-exception.filter';
-import { GptExceptionFilter } from './common/filters/gpt-exception.filter';
+import { GptTokenExceptionFilter } from './common/filters/gpt-token-exception.filter';
 
 @Module({
     imports: [
@@ -35,7 +35,7 @@ import { GptExceptionFilter } from './common/filters/gpt-exception.filter';
         },
         {
             provide: APP_FILTER,
-            useClass: GptExceptionFilter,
+            useClass: GptTokenExceptionFilter,
         }
     ]
 })

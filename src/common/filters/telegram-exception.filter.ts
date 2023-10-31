@@ -9,6 +9,9 @@ export class TelegramExceptionFilter implements ExceptionFilter {
         const { message } = exception
         const ctx = host.getArgs()[0] as Context
         const text = `Unhandled Error: ${message}`
-        ctx.reply(text)
+
+        if (ctx) {
+            ctx.reply(text)
+        }
     }
 }

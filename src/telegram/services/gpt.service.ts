@@ -48,6 +48,7 @@ export class GptService {
                 { role: Role.SYSTEM, content: Prompts.RESEARCHER },
                 ...messages
             ],
+            temperature: 0.7
         })
     }
 }
