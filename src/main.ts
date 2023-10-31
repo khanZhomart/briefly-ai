@@ -6,4 +6,6 @@ async function bootstrap() {
   await app.listen(3000);
 }
 
+process.on('unhandledRejection', (error) => console.error((error as any).message))
+
 bootstrap();

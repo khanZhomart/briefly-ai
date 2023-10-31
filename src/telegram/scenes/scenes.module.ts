@@ -7,7 +7,7 @@ import { OpenAIModule } from "@webeleon/nestjs-openai";
  * A module that wraps up all scenes for further injection.
  */
 @Module({
-    imports: [ServicesModule, OpenAIModule],
+    imports: [ServicesModule],
     providers: [BrieflyScene]
 })
 export class ScenesModule { }

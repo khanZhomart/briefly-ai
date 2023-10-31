@@ -1,10 +1,11 @@
-import { Command, Ctx, Message as Update, On, Scene, SceneEnter, SceneLeave, Message } from "nestjs-telegraf";
+import { Command, Ctx, Message as Update, On, Scene, SceneEnter, SceneLeave, Message, TelegrafException } from "nestjs-telegraf";
 
-import { Context, HistoryMessage } from "@/common/types";
+import { Context, ContextDocument, HistoryMessage } from "@/common/types";
 import { GptService } from "../services/gpt.service";
-import { Scenes } from "@/common/constants";
+import { Actions, Scenes } from "@/common/constants";
 import { Role } from "@webeleon/nestjs-openai";
 import { ParserService } from "../services/parser.service";
+import { GptConversationService } from "../services/gpt-conversation.service";
 
 /**
  * Scene that asks user to provide text for summarizing.
@@ -13,13 +14,13 @@ import { ParserService } from "../services/parser.service";
 export class BrieflyScene {
 
     constructor(
-        private readonly gpt: GptService,
-        private readonly parserService: ParserService
+        private readonly conversation: GptConversationService,
+        private readonly parser: ParserService,
     ) { }
 
     @SceneEnter()
-    onEnter(): string {
-        return 'Type your prompt'
+    onEnter(ctx: Context): void {
+        ctx.reply(Actions.SEND_YOUR_TEXT, { parse_mode: 'HTML' })
     }
 
     @SceneLeave()
@@ -29,7 +30,7 @@ export class BrieflyScene {
 
     @On('text')
     async onText(@Ctx() ctx: Context, @Update('text') text: string): Promise<void> {
-        await this.conversate(ctx, text)
+        await this.conversation.handle(ctx, text)
     }
 
     @Command('leave')
@@ -43,24 +44,13 @@ export class BrieflyScene {
     }
 
     @On("document")
-    async onCommandUpload(ctx: Context): Promise<void> {
-        const doc = (ctx.message as any).document;
+    async onDocument(ctx: ContextDocument): Promise<void> {
+        const { document } = ctx.message;
 
-        if (!doc) {
-            return
-        };
+        const fileLink = await ctx.telegram.getFileLink(document.file_id);
+        const parse = this.parser.getParser(document.mime_type);
+        const text = await parse(fileLink.href);
 
-        const fileLink = await ctx.telegram.getFileLink(doc.file_id);
-        const parse = this.parserService.getParser(doc.mime_type);
-        const text = await parse(fileLink.href)
-
-        await this.conversate(ctx, text)
-    }
-
-    private async conversate(ctx: Context, text: string): Promise<void> {
-        ctx.session.history.push({ role: Role.USER, text: text })
-        const answer = await this.gpt.resolve(ctx.session.history)
-        ctx.session.history.push({ role: Role.ASSISTANT, text: answer })
-        ctx.reply(answer)
+        await this.conversation.handle(ctx, text);
     }
 }

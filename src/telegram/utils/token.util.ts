@@ -26,3 +26,13 @@ export const encode = (text: string): number[] => {
 export const decode = (tokens: number[]): string => {
     return gptt.decode(tokens)
 }
+
+export const isWithinLimit = (text: string, limit: number = 16_000): boolean => {
+    const withinLimit = gptt.isWithinTokenLimit(text, limit)
+    return withinLimit != false
+}
+
+export const isWithinLimitWithChunks =(chunks: number[][], limit: number = 16_000): boolean => {
+    const length: number = chunks.reduce((current, chunk, _) => current + chunk.length, 0)
+    return length <= limit
+}
