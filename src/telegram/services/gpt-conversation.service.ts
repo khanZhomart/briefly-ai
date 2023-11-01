@@ -16,15 +16,17 @@ export class GptConversationService {
 
   async handle(ctx: Context, text: string) {
     ctx.session.history.push({ role: Role.USER, text: text });
-    await this.userHistory.addMessageToConversation(ctx.from.id, "user", text);
+    this.userHistory.addMessageToConversation(ctx.from.id, "user", text);
 
     const response = await this.gpt.resolve(ctx.session.history);
+
     ctx.session.history.push({ role: Role.ASSISTANT, text: response });
-    await this.userHistory.addMessageToConversation(
+    this.userHistory.addMessageToConversation(
       ctx.from.id,
       "bot",
       response
     );
+    
     await ctx.reply(response);
   }
 }

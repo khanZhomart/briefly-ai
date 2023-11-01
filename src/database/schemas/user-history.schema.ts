@@ -1,3 +1,4 @@
+import { Role } from "@webeleon/nestjs-openai";
 import { Schema, Document } from "mongoose";
 
 export interface UserHistory extends Document {
@@ -13,7 +14,7 @@ export const UserHistorySchema = new Schema({
   status: { type: String, default: "active", enum: ["active", "ended"] },
   messages: [
     {
-      sender: { type: String, enum: ["user", "bot"] },
+      sender: { type: String, enum: [Role.USER, Role.ASSISTANT] },
       content: String,
     },
   ],

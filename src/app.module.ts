@@ -16,6 +16,8 @@ import { GptExceptionFilter } from "./common/filters/gpt-exception.filter";
 import { MongooseModule } from "@nestjs/mongoose";
 import mongodbConfigFactory from "./common/config/factories/mongodb-config.factory";
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 @Module({
   imports: [
     ServicesModule,
