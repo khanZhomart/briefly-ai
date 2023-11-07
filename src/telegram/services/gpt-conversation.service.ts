@@ -14,11 +14,10 @@ export class GptConversationService {
     ) {}
 
     async handle(ctx: Context, text: string) {
-        const intervalId = setInterval(() => ctx.sendChatAction('typing'), 5_000);
+        ctx.sendChatAction('typing')
         ctx.session.history.push({ role: Role.USER, text: text })
         const response = await this.gpt.resolve(ctx.session.history)
         ctx.session.history.push({ role: Role.ASSISTANT, text: response })
-        clearInterval(intervalId)
         await ctx.reply(response)
     }
 }
