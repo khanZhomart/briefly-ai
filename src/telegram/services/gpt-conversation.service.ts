@@ -2,22 +2,32 @@ import { Injectable } from "@nestjs/common";
 import { GptService } from "./gpt.service";
 import { Context } from "@/common/types";
 import { Role } from "@webeleon/nestjs-openai";
+import { UserHistoryService } from "./user-history.service";
 
 /**
  * Service for connecting GPT and Telegram
  */
 @Injectable()
 export class GptConversationService {
+  constructor(
+    private readonly gpt: GptService,
+    private readonly userHistory: UserHistoryService
+  ) {}
 
-    constructor(
-        private readonly gpt: GptService,
-    ) {}
+  async handle(ctx: Context, text: string) {
+    ctx.sendChatAction('typing')
+    ctx.session.history.push({ role: Role.USER, text: text });
+    this.userHistory.addMessageToConversation(ctx.from.id, "user", text);
 
-    async handle(ctx: Context, text: string) {
-        ctx.sendChatAction('typing')
-        ctx.session.history.push({ role: Role.USER, text: text })
-        const response = await this.gpt.resolve(ctx.session.history)
-        ctx.session.history.push({ role: Role.ASSISTANT, text: response })
-        await ctx.reply(response)
-    }
+    const response = await this.gpt.resolve(ctx.session.history);
+
+    ctx.session.history.push({ role: Role.ASSISTANT, text: response });
+    this.userHistory.addMessageToConversation(
+      ctx.from.id,
+      "bot",
+      response
+    );
+    
+    await ctx.reply(response);
+  }
 }
