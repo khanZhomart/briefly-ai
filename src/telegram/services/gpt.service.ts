@@ -19,7 +19,7 @@ export class GptService {
         const messages: GptHistoryMessage[] = history.map(({ role, text }) => ({ role: role, textChunks: tokenzr.encodeToChunks(text) }))
         const contextLength = this.getContextLength(messages)
 
-        if (contextLength > Gpt.LIMIT_16K) {
+        if (contextLength > Gpt.LIMIT_128K) {
             throw new GptTokenException(contextLength)
         }
 
@@ -48,6 +48,7 @@ export class GptService {
                 { role: Role.SYSTEM, content: Prompts.RESEARCHER },
                 ...messages
             ],
+            temperature: 0.7
         })
     }
 }

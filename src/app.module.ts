@@ -2,19 +2,19 @@ import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { OpenAIModule } from "@webeleon/nestjs-openai";
 import { TelegrafModule } from "nestjs-telegraf";
+import { APP_FILTER } from "@nestjs/core";
+import { MongooseModule } from "@nestjs/mongoose";
+
 import {
   configFactory,
   openaiConfigFactory,
   telegrafConfigFactory,
+  mongodbConfigFactory,
 } from "./common/config/factories";
-import { ScenesModule } from "./telegram/scenes/scenes.module";
-import { ServicesModule } from "./telegram/services/services.module";
+import { TelegramExceptionFilter, GptTokenExceptionFilter } from "./common/filters"
 import { HandlersModule } from "./telegram/services/handlers";
-import { APP_FILTER } from "@nestjs/core";
-import { TelegramExceptionFilter } from "./common/filters/telegram-exception.filter";
-import { GptExceptionFilter } from "./common/filters/gpt-exception.filter";
-import { MongooseModule } from "@nestjs/mongoose";
-import mongodbConfigFactory from "./common/config/factories/mongodb-config.factory";
+import { ServicesModule } from "./telegram/services";
+import { ScenesModule } from "./telegram/scenes";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
@@ -48,7 +48,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     },
     {
       provide: APP_FILTER,
-      useClass: GptExceptionFilter,
+      useClass: GptTokenExceptionFilter,
     },
   ],
 })

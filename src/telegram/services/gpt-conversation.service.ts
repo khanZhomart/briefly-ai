@@ -15,6 +15,7 @@ export class GptConversationService {
   ) {}
 
   async handle(ctx: Context, text: string) {
+    ctx.sendChatAction('typing')
     ctx.session.history.push({ role: Role.USER, text: text });
     this.userHistory.addMessageToConversation(ctx.from.id, "user", text);
 
